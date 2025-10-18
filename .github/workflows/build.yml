@@ -39,11 +39,6 @@ jobs:
       - name: Update version in gradle.properties
         run: |
           sed -i "s/mod_version=.*/mod_version=${{ steps.get_version.outputs.full_version }}/" gradle.properties
-      
-      - name: Update commit hash in AsteroideAddon.java
-        run: |
-          COMMIT_HASH="${{ github.sha }}"
-          sed -i "s/return \"[a-f0-9]*\"; } \/\/ Crashes/return \"$COMMIT_HASH\"; } \/\/ Crashes/" src/main/java/spigey/asteroide/AsteroideAddon.java
 
       - name: Build with Gradle
         run: ./gradlew clean build --no-daemon
