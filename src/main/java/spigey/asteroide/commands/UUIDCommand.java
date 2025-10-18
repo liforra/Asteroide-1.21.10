@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.commands.arguments.PlayerListEntryArgumentType;
+import meteordevelopment.meteorclient.utils.misc.text.MeteorClickEvent;
 import net.minecraft.command.CommandSource;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.text.ClickEvent;
@@ -47,7 +48,14 @@ public class UUIDCommand extends Command {
     private void log(String message, String... args){ mc.player.sendMessage(Text.of(String.format("§8[§cUUID§8] §7%s%s", String.format(message, args), random())), false); }
 
     private MutableText getButton(String uuid){
-        // TODO: HoverEvent and ClickEvent are interfaces in 1.21.10 - needs proper implementation
-        return Text.literal(String.format("§8%s", uuid));
+        MutableText button = Text.literal(String.format("§8%s", uuid));
+        button.setStyle(button.getStyle()
+            .withClickEvent(new MeteorClickEvent(
+                ClickEvent.Action.COPY_TO_CLIPBOARD,
+                uuid
+            ))
+            .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(Text.literal("Click to copy UUID")))
+        );
+        return button;
     }
 }

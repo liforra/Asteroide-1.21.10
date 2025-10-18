@@ -148,8 +148,7 @@ public class util {
                 ClickEvent.Action.COPY_TO_CLIPBOARD,
                 copy
             ))
-            // TODO: HoverEvent is now an interface in 1.21.10 - needs proper implementation
-            // .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to Copy")))
+            .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(Text.literal("Click to Copy")))
         );
         return Button;
     }
@@ -162,8 +161,7 @@ public class util {
                 ClickEvent.Action.RUN_COMMAND,
                 Commands.get("say").toString(send)
             ))
-            // TODO: HoverEvent is now an interface in 1.21.10 - needs proper implementation
-            // .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to Send")))
+            .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(Text.literal("Click to Send")))
         );
         return message.append(" ").append(Button);
     }

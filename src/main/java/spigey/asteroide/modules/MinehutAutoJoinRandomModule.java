@@ -1,6 +1,5 @@
 package spigey.asteroide.modules;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.IntSetting;
@@ -12,14 +11,10 @@ import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.network.PacketUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.s2c.play.*;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.collection.DefaultedList;
 import spigey.asteroide.AsteroideAddon;
 
 import java.util.Objects;
@@ -89,10 +84,12 @@ public class MinehutAutoJoinRandomModule extends Module {
         if(!Objects.equals(mc.player.getMainHandStack().getName().getString(), "Find a Server (Right-Click)")) return;
         if(!(mc.currentScreen instanceof GenericContainerScreen)) Utils.rightClick();
         if(!(mc.currentScreen instanceof GenericContainerScreen)) return;
-        DefaultedList<Slot> slots = ((GenericContainerScreen) mc.currentScreen).getScreenHandler().slots;
-        // TODO: ClickSlotC2SPacket constructor signature changed in 1.21.10 - needs update
-        // ClickSlotC2SPacket packet = new ClickSlotC2SPacket(1, (short) 69, category.get().get(), (short) 1, SlotActionType.PICKUP, slots.get(0).getStack(), Int2ObjectMaps.singleton(0, ItemStack.EMPTY));
-        // mc.getNetworkHandler().sendPacket(packet);
+        GenericContainerScreen screen = (GenericContainerScreen) mc.currentScreen;
+        int syncId = screen.getScreenHandler().syncId;
+        int slotId = category.get().get();
+        
+        // Use InteractionManager to handle slot clicking (compatible with 1.21.10)
+        mc.interactionManager.clickSlot(syncId, slotId, 0, SlotActionType.PICKUP, mc.player);
         tick = delay.get();
     }
 

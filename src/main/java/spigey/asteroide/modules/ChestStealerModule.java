@@ -1,6 +1,5 @@
 package spigey.asteroide.modules;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
@@ -10,7 +9,6 @@ import net.minecraft.client.gui.screen.ingame.*;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -109,11 +107,12 @@ public class ChestStealerModule extends Module {
                     i++;
                     ItemStack uwu = slots.get(i).getStack();
                     if (shouldSteal(uwu)) {
-                        ClickSlotC2SPacket packet = getPacket(uwu);
                         assert mc.player != null;
-                        mc.player.networkHandler.sendPacket(packet);
+                        // Use InteractionManager to handle slot clicking (compatible with 1.21.10)
+                        mc.interactionManager.clickSlot(((HandledScreen<?>) mc.currentScreen).getScreenHandler().syncId, 
+                            i, 0, SlotActionType.QUICK_MOVE, mc.player);
                         tick = delay.get();
-                        if (delay.get() != 0) return;
+                        return;
                     }
                 }
 
@@ -131,11 +130,12 @@ public class ChestStealerModule extends Module {
             for(Slot slot : slots){
                 if(slot.inventory instanceof PlayerInventory) continue;
                 if (shouldSteal(slot.getStack())) {
-                    ClickSlotC2SPacket packet = getPacket(slot.getStack(), slot);
                     assert mc.player != null;
-                    mc.player.networkHandler.sendPacket(packet);
+                    // Use InteractionManager to handle slot clicking (compatible with 1.21.10)
+                    mc.interactionManager.clickSlot(((HandledScreen<?>) mc.currentScreen).getScreenHandler().syncId, 
+                        slot.id, 0, SlotActionType.QUICK_MOVE, mc.player);
                     tick = delay.get();
-                    if(delay.get() > 0) return;
+                    return;
                 }
             }
             if(screen.getScreenHandler().slots.stream().noneMatch(slot -> slot.hasStack() && !(slot.inventory instanceof PlayerInventory)) && close.get()) {
@@ -154,15 +154,6 @@ public class ChestStealerModule extends Module {
         return (name.get().isEmpty() && contain.get().isEmpty() && items.get().isEmpty()) || stealMode.get() != StealMode.Whitelist;
     }
 
-    private ClickSlotC2SPacket getPacket(ItemStack uwu) {
-        // TODO: ClickSlotC2SPacket constructor signature changed in 1.21.10 - needs update
-        return null;
-    }
-
-    private ClickSlotC2SPacket getPacket(ItemStack uwu, Slot slot) {
-        // TODO: ClickSlotC2SPacket constructor signature changed in 1.21.10 - needs update
-        return null;
-    }
 
     @EventHandler
     private void onPacketSend(PacketEvent.Sent event){

@@ -59,7 +59,7 @@ public class RTCCommand extends Command {
                 ClickEvent.Action.OPEN_URL,
                 "https://discord.gg/QFzE3UzdpQ"
             ))
-            // TODO: HoverEvent is an interface in 1.21.10 - needs proper implementation
+            .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(Text.literal("Click to join Discord")))
         );
         return message.append(" ").append(Button);
     }

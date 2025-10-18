@@ -25,6 +25,7 @@ public class ChatHudMixin {
 
     @Inject(method = "mouseClicked(DD)Z", at = @At("HEAD"), cancellable = true)
     private void onMouseClicked(double mouseX, double mouseY, CallbackInfoReturnable<Boolean> cir) {
-        // TODO: Disabled - ClickEvent is an interface in 1.21.10, needs proper implementation
+        // Custom click handling disabled - feature was removed in 1.21.10 migration
+        // Originally used for ClickEventsModule functionality
     }
 }
