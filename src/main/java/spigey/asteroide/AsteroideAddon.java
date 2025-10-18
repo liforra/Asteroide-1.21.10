@@ -32,6 +32,8 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import net.fabricmc.loader.api.FabricLoader;
+
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class AsteroideAddon extends MeteorAddon {
@@ -39,6 +41,10 @@ public class AsteroideAddon extends MeteorAddon {
     public static final Category CATEGORY = new Category("Asteroide", Items.MAGMA_BLOCK.getDefaultStack());
     public static final HudGroup HUD = new HudGroup("Asteroide");
     public static final Gson gson = new Gson();
+    public static final String VERSION = FabricLoader.getInstance()
+        .getModContainer("asteroide")
+        .map(mod -> mod.getMetadata().getVersion().getFriendlyString())
+        .orElse("unknown");
     public static String spoofedIP = "?";
     public static String MinehutIP = "?";
     public static String trackedPlayer = null;
@@ -54,7 +60,7 @@ public class AsteroideAddon extends MeteorAddon {
         // Uncomment below to disable RTC, will add proper config soon
         // if(1 > 2) return true;
         try {
-            wss = new ws(new URI(uri + "asws?version=0.2.1"));
+            wss = new ws(new URI(uri + "asws?version=" + VERSION));
             wss.connect();
             return true;
         }catch(Exception e){ LOG.error("Failed to connect to RTC! {}", String.valueOf(e)); return false; }
@@ -67,7 +73,7 @@ public class AsteroideAddon extends MeteorAddon {
 
         if(!attemptConnect("ws://rtc.asteroide.cc/")) attemptConnect("wss://rtc.asteroide.fun/");
 
-        LOG.info("\nLoaded Asteroide v0.2.1\n");
+        LOG.info("\nLoaded Asteroide v{}\n", VERSION);
 
         // src/main/java/spigey/asteroide/modules/TrollModule.java
         try ( InputStream is = getClass().getClassLoader().getResourceAsStream("trolls.txt");

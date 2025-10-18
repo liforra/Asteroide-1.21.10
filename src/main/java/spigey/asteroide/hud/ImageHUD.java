@@ -132,10 +132,10 @@ public class ImageHUD extends HudElement {
     @Override
     public void render(HudRenderer renderer) {
         if (empty) { loadImage(); return; }
-        // TODO: Texture API changed in 1.21.10 - rendering disabled to prevent crash
-        // Need to update to new GpuTextureView API
-        setSize(100, 20);
-        renderer.text("Image HUD (disabled)", x, y, Color.RED, true);
+        // Use Meteor's Renderer2D with Identifier instead of direct texture binding
+        Renderer2D.TEXTURE.begin();
+        Renderer2D.TEXTURE.texQuad(x, y, getSize()[0], getSize()[1], TEXID);
+        Renderer2D.TEXTURE.render(null);
     }
 
     private void updateSize() {
