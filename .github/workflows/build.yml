@@ -1,0 +1,88 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'microsoft'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Get version from gradle.properties
+        id: get_version
+        run: |
+          VERSION=$(grep "mod_version=" gradle.properties | cut -d'=' -f2)
+          echo "base_version=$VERSION" >> $GITHUB_OUTPUT
+          echo "full_version=$VERSION-build.${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - name: Update version in gradle.properties
+        run: |
+          sed -i "s/mod_version=.*/mod_version=${{ steps.get_version.outputs.full_version }}/" gradle.properties
+      
+      - name: Update commit hash in AsteroideAddon.java
+        run: |
+          COMMIT_HASH="${{ github.sha }}"
+          sed -i "s/return \"[a-f0-9]*\";.*\/\/ Crashes/return \"$COMMIT_HASH\"; \/\/ Crashes/" src/main/java/spigey/asteroide/AsteroideAddon.java
+
+      - name: Build with Gradle
+        run: ./gradlew clean build --no-daemon
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: asteroide-${{ steps.get_version.outputs.full_version }}
+          path: build/libs/*.jar
+          retention-days: 30
+
+      - name: Create Prerelease
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.full_version }}
+          name: Asteroide v${{ steps.get_version.outputs.full_version }}
+          prerelease: true
+          draft: false
+          body: |
+            ## Asteroide v${{ steps.get_version.outputs.full_version }}
+            
+            **Automated prerelease build #${{ github.run_number }}**
+            
+            ### What's Changed
+            - Build from commit: ${{ github.sha }}
+            - Branch: ${{ github.ref_name }}
+            
+            ### Installation
+            1. Download the `.jar` file below
+            2. Place it in your `.minecraft/mods` folder
+            3. Requires Fabric Loader and Meteor Client
+            
+            ### Requirements
+            - Minecraft 1.21.10
+            - Fabric Loader 0.17.3+
+            - Meteor Client 0.5.8-SNAPSHOT
+            
+            **Note:** This is an automated prerelease build and may contain bugs.
+          files: build/libs/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
