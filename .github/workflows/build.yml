@@ -43,7 +43,7 @@ jobs:
       - name: Update commit hash in AsteroideAddon.java
         run: |
           COMMIT_HASH="${{ github.sha }}"
-          sed -i "s/return \"[a-f0-9]*\";.*\/\/ Crashes/return \"$COMMIT_HASH\"; \/\/ Crashes/" src/main/java/spigey/asteroide/AsteroideAddon.java
+          sed -i "s/return \"[a-f0-9]*\"; } \/\/ Crashes/return \"$COMMIT_HASH\"; } \/\/ Crashes/" src/main/java/spigey/asteroide/AsteroideAddon.java
 
       - name: Build with Gradle
         run: ./gradlew clean build --no-daemon
