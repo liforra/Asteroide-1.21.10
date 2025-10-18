@@ -84,17 +84,17 @@ public class AutoCrashModule extends Module {
         if(!isActive()) return;
         if(this.tick > 0) { this.tick--; return; }
         for (PlayerListEntry player : mc.getNetworkHandler().getPlayerList()) {
-            if (player.getProfile() == null || player.getProfile().getName() == null) continue;
+            if (player.getProfile() == null || player.getProfile().name() == null) continue;
 
-            String name = player.getProfile().getName();
+            String name = player.getProfile().name();
             if (PlayerModeSetting.get() == PlayerMode.Whitelist && !players.get().contains(name)) continue;
             if (PlayerModeSetting.get() == PlayerMode.Blacklist && players.get().contains(name)) continue;
 
             switch (ModeSetting.get()) {
-                case Kill -> mc.player.networkHandler.sendCommand(killMessage.get().replace("{name}", name).replace("/", ""));
-                case Kick -> mc.player.networkHandler.sendCommand(kickMessage.get().replace("{name}", name).replace("/", ""));
-                case Crash -> mc.player.networkHandler.sendCommand(crashMessage .get().replace("{name}", name).replace("/", ""));
-                case Ban -> mc.player.networkHandler.sendCommand(banMessage.get().replace("{name}", name).replace("/", ""));
+                case Kill -> mc.player.networkHandler.sendChatCommand(killMessage.get().replace("{name}", name).replace("/", ""));
+                case Kick -> mc.player.networkHandler.sendChatCommand(kickMessage.get().replace("{name}", name).replace("/", ""));
+                case Crash -> mc.player.networkHandler.sendChatCommand(crashMessage .get().replace("{name}", name).replace("/", ""));
+                case Ban -> mc.player.networkHandler.sendChatCommand(banMessage.get().replace("{name}", name).replace("/", ""));
             }
         }
         this.tick = getDelay();

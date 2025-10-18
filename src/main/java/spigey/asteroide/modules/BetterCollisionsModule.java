@@ -6,6 +6,7 @@ import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.CollisionShapeEvent;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.*;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
 import net.minecraft.util.shape.VoxelShapes;
@@ -64,7 +65,8 @@ public class BetterCollisionsModule extends Module {
         if (!unloadedChunks.get()) return;
         if (event.packet instanceof VehicleMoveC2SPacket packet) {
             if (!mc.world.getChunkManager().isChunkLoaded((int) packet.position().getX() >> 4, (int) packet.position().getZ() >> 4)) {
-                mc.player.getVehicle().updatePosition(mc.player.getVehicle().prevX, mc.player.getVehicle().prevY, mc.player.getVehicle().prevZ);
+                Entity vehicle = mc.player.getVehicle();
+                mc.player.getVehicle().updatePosition(vehicle.lastRenderX, vehicle.lastRenderY, vehicle.lastRenderZ);
                 event.cancel();
             }
         } else if (event.packet instanceof PlayerMoveC2SPacket packet) {

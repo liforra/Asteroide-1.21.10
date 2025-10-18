@@ -58,10 +58,11 @@ public class DevModule extends Module {
             System.out.print(((CustomPayloadC2SPacket) event.packet).payload().getId().id());
         }
         if (!(event.packet instanceof ClickSlotC2SPacket) || !slots.get()) return;
-        ChatUtils.sendMsg(Text.of("§cSLOT " + ((ClickSlotC2SPacket) event.packet).getSlot()));
-        ChatUtils.sendMsg(Text.of("§aREVISION " + ((ClickSlotC2SPacket) event.packet).getRevision()));
-        ChatUtils.sendMsg(Text.of("§9SYNC ID " + ((ClickSlotC2SPacket) event.packet).getSyncId()));
-        ChatUtils.sendMsg(Text.of("§7ACTION " + ((ClickSlotC2SPacket) event.packet).getActionType().name()));
+        ClickSlotC2SPacket packet = (ClickSlotC2SPacket) event.packet;
+        ChatUtils.sendMsg(Text.of("§cSLOT " + packet.slot()));
+        ChatUtils.sendMsg(Text.of("§aREVISION " + packet.revision()));
+        ChatUtils.sendMsg(Text.of("§9SYNC ID " + packet.syncId()));
+        ChatUtils.sendMsg(Text.of("§7ACTION " + packet.actionType().name()));
         event.cancel();
     }
 

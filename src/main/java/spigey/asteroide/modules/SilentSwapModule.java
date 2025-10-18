@@ -61,7 +61,7 @@ public class SilentSwapModule extends Module {
             if(!items.get().contains(mc.player.getInventory().getStack(i).getItem())) continue;
             event.cancel();
             this.tick = calculateDelay();
-            this.lastSlot = mc.player.getInventory().selectedSlot;
+            this.lastSlot = mc.player.getInventory().getSelectedSlot();
             this.action = Action.ATTACK;
             mc.player.getInventory().setSelectedSlot(i);
             break;

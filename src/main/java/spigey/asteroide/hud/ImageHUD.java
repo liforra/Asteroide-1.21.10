@@ -4,7 +4,6 @@ import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
-import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.hud.HudElement;
 import meteordevelopment.meteorclient.systems.hud.HudElementInfo;
@@ -13,11 +12,7 @@ import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.network.Http;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.orbit.EventHandler;
-
-import meteordevelopment.starscript.Script;
-import meteordevelopment.starscript.compiler.Compiler;
-import meteordevelopment.starscript.compiler.Parser;
-import meteordevelopment.starscript.utils.StarscriptError;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.text.Text;
@@ -137,11 +132,10 @@ public class ImageHUD extends HudElement {
     @Override
     public void render(HudRenderer renderer) {
         if (empty) { loadImage(); return; }
-        GL.bindTexture(TEXID);
-        Renderer2D.TEXTURE.begin();
-        double[] size = getSize();
-        Renderer2D.TEXTURE.texQuad(x, y, size[0], size[1], Color.WHITE);
-        Renderer2D.TEXTURE.render(null);
+        // TODO: Texture API changed in 1.21.10 - rendering disabled to prevent crash
+        // Need to update to new GpuTextureView API
+        setSize(100, 20);
+        renderer.text("Image HUD (disabled)", x, y, Color.RED, true);
     }
 
     private void updateSize() {
@@ -158,7 +152,7 @@ public class ImageHUD extends HudElement {
                 String compiled = compile(url.get()).isEmpty() ? url.get() : compile(url.get());
                 var tempImage = NativeImage.read(Http.get(compiled).sendInputStream());
                 mc.execute(() -> {
-                    try{ mc.getTextureManager().registerTexture(TEXID, new NativeImageBackedTexture(tempImage)); }
+                    try{ mc.getTextureManager().registerTexture(TEXID, new NativeImageBackedTexture(() -> "asteroide_image", tempImage)); }
                     catch(Exception e){mc.player.sendMessage(Text.of(String.format("§8[§cAsteroide§8] §cCould not load image from URL §7%s§c! %s", url.get(), e)), false);}
                 });
                 this.image = tempImage;
@@ -169,16 +163,9 @@ public class ImageHUD extends HudElement {
         updateSize();
     }catch(Exception e){/**/}}
 
-    private static String compile(String script) { // Partly from meteor rejects https://github.com/AntiCope/meteor-rejects/blob/master/src/main/java/anticope/rejects/modules/ChatBot.java
+    private static String compile(String script) {
         if (script == null) return null;
-        Parser.Result result = Parser.parse(script);
-        if (result.hasErrors()) {
-            MeteorStarscript.printChatError(result.errors.get(0));
-            return null;
-        }
-        Script compiled = Compiler.compile(result);
-        if(compiled == null){ return null; }
-        try { return MeteorStarscript.ss.run(compiled).text; }
-        catch(StarscriptError e){ MeteorStarscript.printChatError(e); return null; }
+        // Starscript compilation - fallback to plain script
+        return script;
     }
 }

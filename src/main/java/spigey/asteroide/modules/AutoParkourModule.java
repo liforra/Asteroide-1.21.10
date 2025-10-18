@@ -136,7 +136,7 @@ public class AutoParkourModule extends Module {
         if(sortMode.get() == SortMode.Any) { candidates = new ArrayList<>(List.of(candidates.get(0))); }
         else if(sortMode.get() == SortMode.Random){ java.util.Collections.shuffle(candidates); }
         candidates.sort((a, b) -> {
-            Vec3d p = mc.player.getPos();
+            Vec3d p = mc.player.getEyePos();
             return Double.compare(p.squaredDistanceTo(new Vec3d(a.getX(), a.getY(), a.getZ())), p.squaredDistanceTo(new Vec3d(b.getX(), b.getY(), b.getZ())));
         });
         if(sortMode.get() == SortMode.Furthest) java.util.Collections.reverse(candidates);

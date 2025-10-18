@@ -28,7 +28,7 @@ public class UUIDCommand extends Command {
         builder.then(argument("player", PlayerListEntryArgumentType.create()).executes(context -> {
             GameProfile player = PlayerListEntryArgumentType.get(context).getProfile();
 
-            if (player != null) display(player.getId());
+            if (player != null) display(player.id());
             else error("Player not found!");
             return SINGLE_SUCCESS;
         }));
@@ -39,7 +39,7 @@ public class UUIDCommand extends Command {
         mc.player.sendMessage(Text.literal("§8[§cUUID§8] §7UUID: ").append(getButton(uuid.toString())), false);
         mc.player.sendMessage(Text.literal("§8[§cUUID§8] §7Compact: ").append(getButton(uuid.toString().replaceAll("-", ""))), false);
         mc.player.sendMessage(Text.literal("§8[§cUUID§8] §7Numeric: "), false);
-        mc.player.sendMessage(Text.literal("§8[§cUUID§8] §7").append(getButton(NbtHelper.fromUuid(uuid).toString())), false);
+        mc.player.sendMessage(Text.literal("§8[§cUUID§8] §7").append(getButton(String.valueOf(uuid.getMostSignificantBits()) + "," + uuid.getLeastSignificantBits())), false);
         log("§f-------------------------------");
     }
 
@@ -47,9 +47,7 @@ public class UUIDCommand extends Command {
     private void log(String message, String... args){ mc.player.sendMessage(Text.of(String.format("§8[§cUUID§8] §7%s%s", String.format(message, args), random())), false); }
 
     private MutableText getButton(String uuid){
-        return Text.literal(String.format("§8%s", uuid)).styled(style -> style
-            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,  Text.literal("§7Click to copy")))
-            .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
-        );
+        // TODO: HoverEvent and ClickEvent are interfaces in 1.21.10 - needs proper implementation
+        return Text.literal(String.format("§8%s", uuid));
     }
 }

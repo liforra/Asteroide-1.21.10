@@ -18,7 +18,7 @@ public class PlayerListHudMixin {
     @Inject(method = "getPlayerName", at = @At("RETURN"), cancellable = true)
     private void modifyPlayerName(PlayerListEntry entry, CallbackInfoReturnable<Text> cir) {
         final RTCSettingsModule rtc = Modules.get().get(RTCSettingsModule.class);
-        if(!tooLazyForThisShit(entry.getProfile().getName()) || !rtc.disableIcon.get()) return;
+        if(!tooLazyForThisShit(entry.getProfile().name()) || !rtc.disableIcon.get()) return;
         cir.setReturnValue(Text.empty().append("\uE429 ").append(cir.getReturnValue()));
     }
 

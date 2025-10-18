@@ -26,7 +26,7 @@ public class WhereIsCommand extends Command {
             if((profile == null) || mc.world == null) {error("Player not found."); return SINGLE_SUCCESS;}
             for(Entity entity : mc.world.getEntities()){
                 if(!(entity instanceof PlayerEntity)) continue;
-                if(util.withoutStyle(entity.getName()).equals(profile.getName())){
+                if(util.withoutStyle(entity.getName()).equals(profile.name())){
                     ChatUtils.sendMsg(Text.of(String.format("§7Player found at §cX: %.0f§7, §aY: %.0f§7, §9Z: %.0f", entity.getX(), entity.getY(), entity.getZ())));
                     assert mc.player != null;
                     mc.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, new Vec3d(entity.getX(), entity.getY() + 1.62, entity.getZ()));

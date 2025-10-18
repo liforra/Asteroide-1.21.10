@@ -15,7 +15,6 @@ public class MeCommand extends Command {
             info("§f------ Info ------");
             info("§fUsername: §7" + mc.getSession().getUsername());
             info("§fUUID: §7" + mc.getSession().getUuidOrNull());
-            info("§fAccountType: §7" + mc.getSession().getAccountType());
             info("§fServer: §7" + mc.getServer());
             info("§fScreen: §7" + mc.currentScreen);
             return SINGLE_SUCCESS;

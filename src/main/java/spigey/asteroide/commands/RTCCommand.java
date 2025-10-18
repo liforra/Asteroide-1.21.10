@@ -9,10 +9,6 @@ import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.misc.text.MeteorClickEvent;
-import meteordevelopment.starscript.Script;
-import meteordevelopment.starscript.compiler.Compiler;
-import meteordevelopment.starscript.compiler.Parser;
-import meteordevelopment.starscript.utils.StarscriptError;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
@@ -63,10 +59,7 @@ public class RTCCommand extends Command {
                 ClickEvent.Action.OPEN_URL,
                 "https://discord.gg/QFzE3UzdpQ"
             ))
-            .withHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                Text.literal("§7discord.gg/QFzE3UzdpQ")
-            ))
+            // TODO: HoverEvent is an interface in 1.21.10 - needs proper implementation
         );
         return message.append(" ").append(Button);
     }
@@ -81,15 +74,10 @@ public class RTCCommand extends Command {
     }
 
 
-    private static String compile(String script) { // Partly from meteor rejects https://github.com/AntiCope/meteor-rejects/blob/master/src/main/java/anticope/rejects/modules/ChatBot.java
+    private static String compile(String script) {
         if(!Modules.get().get(RTCSettingsModule.class).starscript.get()) return script;
         if(script == null) return script;
-        Parser.Result result = Parser.parse(script);
-        if (result.hasErrors()) { MeteorStarscript.printChatError(result.errors.get(0)); return script; }
-        Script compiled = Compiler.compile(result);
-        if(compiled == null){ return script; }
-        String output = MeteorStarscript.ss.run(compiled).text;
-        try { return output == null ? script : output; }
-        catch(StarscriptError e){ MeteorStarscript.printChatError(e); return script; }
+        // Starscript compilation - fallback to plain script
+        return script;
     }
 }

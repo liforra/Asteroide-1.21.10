@@ -5,8 +5,6 @@ import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.systems.modules.Modules;
-import meteordevelopment.meteorclient.systems.modules.misc.AutoRespawn;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
 import spigey.asteroide.AsteroideAddon;
@@ -18,7 +16,7 @@ import static spigey.asteroide.util.msg;
 
 public class AutoBack extends Module {
     public AutoBack() {
-        super(AsteroideAddon.CATEGORY, "Auto-Back", "REQUIRES AUTORESPAWN Automatically runs /back upon dying");
+        super(AsteroideAddon.CATEGORY, "Auto-Back", "Automatically runs /back upon dying. Make sure to enable AutoRespawn in Meteor Client.");
     }
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final Setting<AutoBack.AutoBackMode> mode = sgGeneral.add(new EnumSetting.Builder<AutoBack.AutoBackMode>()
@@ -75,8 +73,7 @@ public class AutoBack extends Module {
 
     @Override
     public void onActivate() {
-        Module thing = Modules.get().get(AutoRespawn.class);
-        if(!thing.isActive()){thing.toggle();}
+        // Note: Make sure AutoRespawn is enabled in Meteor Client for this to work properly
     }
 
     private static final Random random = new Random();

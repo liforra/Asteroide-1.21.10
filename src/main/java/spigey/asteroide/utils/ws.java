@@ -76,7 +76,13 @@ public class ws extends WebSocketClient {
                     final RTCSettingsModule rtc = Modules.get().get(RTCSettingsModule.class);
                     String msg = message.get("message").getAsString();
                     if(rtc.censor.get() && rtc.isActive()) msg = msg.replaceAll("(?i)igg", "***").replaceAll("(?i)fag", "***");
-                    if(!(rtc.hideMessages.get() && rtc.isActive())) mc.player.sendMessage(HexConverter.toText(msg), false);
+                    final String finalMsg = msg;
+                    if(!(rtc.hideMessages.get() && rtc.isActive())) {
+                        // Execute on main thread to prevent crashes
+                        mc.execute(() -> {
+                            if(mc.player != null) mc.player.sendMessage(HexConverter.toText(finalMsg), false);
+                        });
+                    }
                     break;
             }
         }catch(Exception E){ AsteroideAddon.LOG.error(String.valueOf(E)); }
@@ -91,7 +97,12 @@ public class ws extends WebSocketClient {
         if(ping != null) { ping.cancel(); ping = null; }
         try{
             final RTCSettingsModule rtc = Modules.get().get(RTCSettingsModule.class);
-            if(!(rtc.hideMessages.get() && rtc.isActive())) mc.player.sendMessage(Text.of("§8§l[§c§lAsteroide§8§l]§r Disconnected from RTC Server. ("+s+")"), false);
+            if(!(rtc.hideMessages.get() && rtc.isActive())) {
+                // Execute on main thread to prevent crashes
+                mc.execute(() -> {
+                    if(mc.player != null) mc.player.sendMessage(Text.of("§8§l[§c§lAsteroide§8§l]§r Disconnected from RTC Server. ("+s+")"), false);
+                });
+            }
         }catch(Exception L){/**/}
         reconnectThread = new Thread(() -> {
             while(true){

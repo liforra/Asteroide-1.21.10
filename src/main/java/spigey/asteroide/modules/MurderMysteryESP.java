@@ -183,7 +183,7 @@ public class MurderMysteryESP extends Module {
         for(Entity entity : mc.world.getEntities()){
             if(entity == mc.player && ignoreSelf.get()) continue;
             if(!(entity instanceof PlayerEntity)) continue;
-            String player = ((PlayerEntity) entity).getGameProfile().getName();
+            String player = ((PlayerEntity) entity).getGameProfile().name();
             Item main = ((PlayerEntity) entity).getMainHandStack().getItem();
             boolean murd = murdItems.get().contains(main); boolean dec = decItems.get().contains(main);
             if(murd) { murderers.add(player); detectives.remove(player); }
@@ -203,7 +203,7 @@ public class MurderMysteryESP extends Module {
             if(entity instanceof ItemEntity && ((ItemEntity) entity).getStack().getItem() == Items.GOLD_INGOT && itemEsp.get()) itemEsp(event, entity);
             if(entity == mc.player && ignoreSelf.get()) continue;
             if(!(entity instanceof PlayerEntity)) continue;
-            String player = ((PlayerEntity) entity).getGameProfile().getName();
+            String player = ((PlayerEntity) entity).getGameProfile().name();
             tracers(event, entity);
             drawBoundingBox(event, entity);
         }
@@ -225,7 +225,7 @@ public class MurderMysteryESP extends Module {
     }
 
     private void drawBoundingBox(Render3DEvent event, Entity entity) {
-        Role role = getRole(((PlayerEntity) entity).getGameProfile().getName());
+        Role role = getRole(((PlayerEntity) entity).getGameProfile().name());
         if(role == Role.Murderer && !murdESP.get()) return;
         if(role == Role.Detective && !decESP.get()) return;
         if(role == Role.Innocent && !innESP.get()) return;
@@ -242,7 +242,7 @@ public class MurderMysteryESP extends Module {
     }
 
     private void tracers(Render3DEvent event, Entity entity){
-        Role role = getRole(((PlayerEntity) entity).getGameProfile().getName());
+        Role role = getRole(((PlayerEntity) entity).getGameProfile().name());
         if(role == Role.Murderer && !murdTracers.get()) return;
         if(role == Role.Detective && !decTracers.get()) return;
         if(role == Role.Innocent && !innTracers.get()) return;
@@ -250,9 +250,9 @@ public class MurderMysteryESP extends Module {
         Color color = getColor(role);
         if(color == null) return;
 
-        double x = entity.prevX + (entity.getX() - entity.prevX) * event.tickDelta;
-        double y = entity.prevY + (entity.getY() - entity.prevY) * event.tickDelta;
-        double z = entity.prevZ + (entity.getZ() - entity.prevZ) * event.tickDelta;
+        double x = MathHelper.lerp(event.tickDelta, entity.lastRenderX, entity.getX());
+        double y = MathHelper.lerp(event.tickDelta, entity.lastRenderY, entity.getY());
+        double z = MathHelper.lerp(event.tickDelta, entity.lastRenderZ, entity.getZ());
 
         event.renderer.line(RenderUtils.center.x, RenderUtils.center.y, RenderUtils.center.z, x, y, z, new Color(color).a(255));
     }

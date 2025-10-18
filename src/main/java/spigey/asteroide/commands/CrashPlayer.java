@@ -32,8 +32,8 @@ public class CrashPlayer extends Command {
             ChatUtils.sendPlayerMsg("/execute at @a[name=!" + mc.player.getName().getLiteralString() + "] run particle ash ~ ~ ~ 1 1 1 1 2147483647 force @a[name=!" + mc.player.getName().getLiteralString() + "]");
             StringBuilder playerNames = new StringBuilder("Attempting to Crash players: | Credits to TrouserStreak");
             for (PlayerListEntry player : players) {
-                if (!player.getProfile().getId().equals(mc.player.getGameProfile().getId())) {
-                    playerNames.append(player.getProfile().getName()).append(", ");
+                if (!player.getProfile().id().equals(mc.player.getGameProfile().id())) {
+                    playerNames.append(player.getProfile().name()).append(", ");
                 }
             }
             playerNames.setLength(playerNames.length() - 2);  // Remove the extra comma and space at the end
@@ -43,10 +43,10 @@ public class CrashPlayer extends Command {
         builder.then(argument("player", PlayerListEntryArgumentType.create()).executes(context -> {
             GameProfile profile = PlayerListEntryArgumentType.get(context).getProfile();
             if (profile != null) {
-                if (Objects.requireNonNull(mc.getNetworkHandler()).getPlayerList().stream().anyMatch(player -> player.getProfile().getId().equals(profile.getId()))) {
+                if (Objects.requireNonNull(mc.getNetworkHandler()).getPlayerList().stream().anyMatch(player -> player.getProfile().id().equals(profile.id()))) {
                     assert mc.player != null;
-                    ChatUtils.sendPlayerMsg("/execute at " + profile.getName() + " run particle ash ~ ~ ~ 1 1 1 1 2147483647 force " + profile.getName());
-                    ChatUtils.sendMsg(Text.of("Attempting to Crash player: " + profile.getName() + " | Credits to TrouserStreak"));
+                    ChatUtils.sendPlayerMsg("/execute at " + profile.name() + " run particle ash ~ ~ ~ 1 1 1 1 2147483647 force " + profile.name());
+                    ChatUtils.sendMsg(Text.of("Attempting to Crash player: " + profile.name() + " | Credits to TrouserStreak"));
                     if (!mc.player.hasPermissionLevel(2)) {
                         error(perm(2));
                     }

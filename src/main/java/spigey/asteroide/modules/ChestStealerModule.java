@@ -154,15 +154,14 @@ public class ChestStealerModule extends Module {
         return (name.get().isEmpty() && contain.get().isEmpty() && items.get().isEmpty()) || stealMode.get() != StealMode.Whitelist;
     }
 
-    private ClickSlotC2SPacket getPacket(ItemStack uwu) { // intellij wtf
-        ClickSlotC2SPacket packet = new ClickSlotC2SPacket(0, 0, 0, 0, SlotActionType.PICKUP, ItemStack.EMPTY, Int2ObjectMaps.singleton(0, ItemStack.EMPTY));
-        if(mc.currentScreen instanceof GenericContainerScreen) packet = new ClickSlotC2SPacket(((GenericContainerScreen) mc.currentScreen).getScreenHandler().syncId, 1, i, 0, SlotActionType.QUICK_MOVE, uwu, Int2ObjectMaps.singleton(i, ItemStack.EMPTY));
-        if(mc.currentScreen instanceof ShulkerBoxScreen) packet = new ClickSlotC2SPacket(((ShulkerBoxScreen) mc.currentScreen).getScreenHandler().syncId, 1, i, 0, SlotActionType.QUICK_MOVE, uwu, Int2ObjectMaps.singleton(i, ItemStack.EMPTY));
-        return packet;
+    private ClickSlotC2SPacket getPacket(ItemStack uwu) {
+        // TODO: ClickSlotC2SPacket constructor signature changed in 1.21.10 - needs update
+        return null;
     }
 
     private ClickSlotC2SPacket getPacket(ItemStack uwu, Slot slot) {
-        return new ClickSlotC2SPacket(((HandledScreen<?>) mc.currentScreen).getScreenHandler().syncId, 1, slot.id, 0, SlotActionType.QUICK_MOVE, uwu, Int2ObjectMaps.singleton(slot.id, ItemStack.EMPTY));
+        // TODO: ClickSlotC2SPacket constructor signature changed in 1.21.10 - needs update
+        return null;
     }
 
     @EventHandler

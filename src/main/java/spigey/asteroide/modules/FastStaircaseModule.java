@@ -14,11 +14,7 @@ public class FastStaircaseModule extends Module {
     // For some time I actually thought this doesn't work, until I played on a server with AC, and I was so fast that I flagged the anticheat
     @EventHandler
     private void onTick(TickEvent.Post event){
-        if(!isActive()){return;}
-        if(!Registries.BLOCK.getId(mc.world.getBlockState(mc.player.getBlockPos()).getBlock()).toString().endsWith("_stairs")) return;
-        boolean asd = Modules.get().get(HighJump.class).isActive();
-        if(asd) Modules.get().get(HighJump.class).toggle();
-        if(Registries.BLOCK.getId(mc.world.getBlockState(mc.player.getBlockPos()).getBlock()).toString().endsWith("_stairs")) if(mc.player.getHorizontalFacing() == mc.world.getBlockState(mc.player.getBlockPos()).get(StairsBlock.FACING) && mc.player.input.movementForward > 0) mc.player.jump();
-        if(asd) Modules.get().get(HighJump.class).toggle();
+        // TODO: Disabled - Input.movementForward field doesn't exist in 1.21.10
+        // Need to find correct field name for forward movement input
     }
 }

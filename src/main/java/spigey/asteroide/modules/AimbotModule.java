@@ -12,8 +12,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import spigey.asteroide.AsteroideAddon;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.SwordItem;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifiersComponent;
+import net.minecraft.entity.attribute.EntityAttributes;
 
 import java.util.Set;
 
@@ -111,10 +112,18 @@ public class AimbotModule extends Module {
 
     private boolean itemInHand() {
         return switch (weapon.get()) {
-            case Axe -> mc.player.getMainHandStack().getItem() instanceof AxeItem;
-            case Sword -> mc.player.getMainHandStack().getItem() instanceof SwordItem;
-            case Both -> mc.player.getMainHandStack().getItem() instanceof AxeItem || mc.player.getMainHandStack().getItem() instanceof SwordItem;
+            case Axe -> isAxe(mc.player.getMainHandStack());
+            case Sword -> isSword(mc.player.getMainHandStack());
+            case Both -> isAxe(mc.player.getMainHandStack()) || isSword(mc.player.getMainHandStack());
             case All -> true;
         };
+    }
+
+    private boolean isSword(net.minecraft.item.ItemStack stack) {
+        return stack.getItem().toString().toLowerCase().contains("sword");
+    }
+
+    private boolean isAxe(net.minecraft.item.ItemStack stack) {
+        return stack.getItem().toString().toLowerCase().contains("axe");
     }
 }

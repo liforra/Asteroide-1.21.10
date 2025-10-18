@@ -86,12 +86,13 @@ public class MinehutAutoJoinRandomModule extends Module {
         if(tick > 0) {tick--; return;}
         if(mc.isInSingleplayer()) return;
         if(!(Objects.requireNonNull(mc.getCurrentServerEntry()).address).toLowerCase().contains("minehut.")) return;
-        if(!Objects.equals(mc.player.getInventory().getMainHandStack().getName().getString(), "Find a Server (Right-Click)")) return;
+        if(!Objects.equals(mc.player.getMainHandStack().getName().getString(), "Find a Server (Right-Click)")) return;
         if(!(mc.currentScreen instanceof GenericContainerScreen)) Utils.rightClick();
         if(!(mc.currentScreen instanceof GenericContainerScreen)) return;
         DefaultedList<Slot> slots = ((GenericContainerScreen) mc.currentScreen).getScreenHandler().slots;
-        ClickSlotC2SPacket packet = new ClickSlotC2SPacket(1, 69, category.get().get(), 1, SlotActionType.PICKUP, slots.get(0).getStack(), Int2ObjectMaps.singleton(0, ItemStack.EMPTY));
-        mc.getNetworkHandler().sendPacket(packet);
+        // TODO: ClickSlotC2SPacket constructor signature changed in 1.21.10 - needs update
+        // ClickSlotC2SPacket packet = new ClickSlotC2SPacket(1, (short) 69, category.get().get(), (short) 1, SlotActionType.PICKUP, slots.get(0).getStack(), Int2ObjectMaps.singleton(0, ItemStack.EMPTY));
+        // mc.getNetworkHandler().sendPacket(packet);
         tick = delay.get();
     }
 
@@ -99,7 +100,7 @@ public class MinehutAutoJoinRandomModule extends Module {
     private void onPacketReceive(PacketEvent.Receive event){
         if(!isActive() || !cancelPackets.get() || mc.isInSingleplayer()) return;
         if(!(Objects.requireNonNull(mc.getCurrentServerEntry()).address).toLowerCase().contains("minehut.")) return;
-        if(!Objects.equals(mc.player.getInventory().getMainHandStack().getName().getString(), "Find a Server (Right-Click)")) return;
+        if(!Objects.equals(mc.player.getMainHandStack().getName().getString(), "Find a Server (Right-Click)")) return;
         if(s2cPackets.get().contains(event.packet.getClass())) event.cancel();
     }
 
@@ -107,7 +108,7 @@ public class MinehutAutoJoinRandomModule extends Module {
     private void onPacketSend(PacketEvent.Send event){
         if(!isActive() || !cancelPackets.get() || mc.isInSingleplayer()) return;
         if(!(Objects.requireNonNull(mc.getCurrentServerEntry()).address).toLowerCase().contains("minehut.")) return;
-        if(!Objects.equals(mc.player.getInventory().getMainHandStack().getName().getString(), "Find a Server (Right-Click)")) return;
+        if(!Objects.equals(mc.player.getMainHandStack().getName().getString(), "Find a Server (Right-Click)")) return;
         if(c2sPackets.get().contains(event.packet.getClass())) event.cancel();
     }
 

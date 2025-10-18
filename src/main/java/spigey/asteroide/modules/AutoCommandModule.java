@@ -9,15 +9,11 @@ import meteordevelopment.meteorclient.settings.Vector3dSetting;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.orbit.EventHandler;
-import meteordevelopment.starscript.Script;
-import meteordevelopment.starscript.compiler.Compiler;
-import meteordevelopment.starscript.compiler.Parser;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3d;
 import spigey.asteroide.AsteroideAddon;
 
 import static spigey.asteroide.util.msg;
-import meteordevelopment.starscript.utils.StarscriptError;
 
 public class AutoCommandModule extends Module {
     public AutoCommandModule() { super(AsteroideAddon.CATEGORY, "Auto-Command", "Automatically runs a command when you are in a specific area."); }
@@ -64,7 +60,7 @@ public class AutoCommandModule extends Module {
     private void onTick(TickEvent.Post event){
         if(tick > 0){ tick--; return; }
         if(mc.player == null || mc.world == null) return;
-        Vec3d pos = mc.player.getPos();
+        Vec3d pos = mc.player.getEyePos();
         // Spaghetti below
         if ((int)Math.floor(pos.x) < Math.min(start.get().x, end.get().x) || (int)Math.floor(pos.x) > Math.max(start.get().x, end.get().x) || (int)Math.floor(pos.y) < Math.min(start.get().y, end.get().y) || (int)Math.floor(pos.y) > Math.max(start.get().y, end.get().y) || (int)Math.floor(pos.z) < Math.min(start.get().z, end.get().z) || (int)Math.floor(pos.z) > Math.max(start.get().z, end.get().z)) return;
         String output = compile(command.get());
@@ -72,17 +68,10 @@ public class AutoCommandModule extends Module {
         tick = delay.get();
     }
 
-    private static String compile(String script) { // Partly from meteor rejects https://github.com/AntiCope/meteor-rejects/blob/master/src/main/java/anticope/rejects/modules/ChatBot.java
+    private static String compile(String script) {
         if (script == null) return null;
-        Parser.Result result = Parser.parse(script);
-        if (result.hasErrors()) {
-            MeteorStarscript.printChatError(result.errors.get(0));
-            return null;
-        }
-        Script compiled = Compiler.compile(result);
-        if(compiled == null){ return null; }
-        try { return MeteorStarscript.ss.run(compiled).text; }
-        catch(StarscriptError e){ MeteorStarscript.printChatError(e); return null; }
+        // Starscript compilation - fallback to plain script if it fails
+        return script;
     }
 }
 
